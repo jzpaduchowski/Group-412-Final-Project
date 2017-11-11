@@ -1,0 +1,31 @@
+List of Function Prototypes and Division of Work
+
+Drink mixer functions:
+
+  void getCup(int * cartPosition, colourSensor???); //retreives cup and checks if cup landed in cart properly
+  
+  void openValve();
+  
+  void closeValve();
+
+  void pourDrinks(int * cartPosition, int drinkVolume[3], colourSensor???); //pours drinks while constanly checking if cup is still in cart 
+
+
+Coin sorter functions:
+
+  void initializeCoinSorter(int motorNum); //calibrates coin sorter using toonie
+  
+  int measureCoin(bool * status); //measures coins in queue and returns value of coin
+    return value;
+
+
+User i/o functions:
+
+  int orderProcess(int options[3], int drinkVolume[3]); //fills up array with data on how much of each liquid to pour based on user input. Also returns cost.
+    return cost;
+    
+  void menuDisplay(int options[3]); //makes easy to read menu to select drink with options.
+    
+Main:
+
+   //interface with all functions and keep track of cost as well as whether or not tasks have been completed (for example checking if user has taken cup at the end).
