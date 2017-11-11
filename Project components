@@ -10,6 +10,7 @@ Drink mixer functions:
 
   void pourDrinks(int * cartPosition, int drinkVolume[3], colourSensor???); //pours drinks while constanly checking if cup is still in cart 
 
+  void serveDrink(int * cartPosition); //moves drink out to customer and waits for drink to be taken, then resets
 
 Coin sorter functions:
 
