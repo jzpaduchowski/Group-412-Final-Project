@@ -37,5 +37,5 @@ User i/o functions:
   void menuDisplay(int options[3]); //makes easy to read menu to select drink with options.
     
 Main:
-   //Whoever finishes assigned functions first / shared
+   //Brandon Chan and Sabar Ahuja
    //interface with all functions and keep track of cost as well as whether or not tasks have been completed (for example checking if user has taken cup at the end).
