@@ -5,8 +5,10 @@ const int drink2 = 110; //Position of drink 2
 const int drink3 = 220; //Position of drink 3
 const int cup = 440; //Position of cup dispenser
 const int cupDelivery = 750; //Position to deliver the cup
+const string cupFell = "The cup fell!";
+const string noCups = "No more cups!";
 
-void errorMessage(string errorCode)
+void errorMessage(const string errorCode)
 {
 	displayCenteredBigTextLine(3, "ERROR!");
 	displayCenteredBigTextLine(6, "%s", errorCode);
@@ -21,7 +23,7 @@ void updateDisplay()
 	displayBigTextLine(6, "%d", nMotorEncoder[motorA]);
 }
 
-void wait4Buton()
+void wait4Button()
 {
 	wait1Msec(750);
 }
@@ -62,7 +64,7 @@ void valveControl(int valveType, int valvePos)
 		motor[motorB] = 0;
 
 		clearTimer(T1);
-		while (time1[T1] < 5000 && SensorValue[S1] != 0);
+		while (time1[T1] < 3500 && SensorValue[S1] != 0);
 
 		motor[motorB] = -33;
 		while(nMotorEncoder[motorB] > -8);
@@ -72,7 +74,7 @@ void valveControl(int valveType, int valvePos)
 
 		if (SensorValue[S1] == 0)
 		{
-			errorMessage("The cup fell!");
+			errorMessage(cupFell);
 			wait4Button();
 			valveControl(cup, cup);
 			wait4Button();
@@ -97,7 +99,7 @@ void valveControl(int valveType, int valvePos)
 
 		if (SensorValue[S1] == 0)
 		{
-				errorMessage("No more cups!");
+				errorMessage(noCups);
 				wait4Button();
 				valveControl(cup, cup);
 		}
@@ -137,8 +139,8 @@ task main()
 		if (getButtonPress(buttonUp))
 		{
 			goTo(cup);
-			wait4Buton();
-			valveControl(cup);
+			wait4Button();
+			valveControl(cup, cup);
 		}
 		if (getButtonPress(buttonDown))
 			goTo(cupDelivery);
