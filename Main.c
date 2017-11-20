@@ -8,6 +8,12 @@ All functions related the drink selection and GUI will be merged to Menu Selecti
 All functions related to the valve and cart control will be merged to Drink Mixer.c
 */
 
+/*
+-------------------------------CONSTANTS--------------------------------------
+*/
+
+//place any constants here pls
+
 task main()
 {
 

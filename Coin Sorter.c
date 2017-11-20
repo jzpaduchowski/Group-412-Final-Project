@@ -7,6 +7,12 @@ D - Coin Measurement
 2 - Coin touch sensor
 */
 
+/*
+-------------------------------CONSTANTS--------------------------------------
+*/
+
+//paste constants here pls
+
 void initializeCoinSorter()
 {
 	displayBigTextLine(0,"Insert Toonie");
@@ -15,7 +21,7 @@ void initializeCoinSorter()
 	while (getButtonPress(buttonAny))
 	{}
 	eraseDisplay()
-	
+
 	motor[motorD] = 75;
 	while(SensorValue[S2] == 0)
 	{}
@@ -28,14 +34,14 @@ void initializeCoinSorter()
 	motor[motorD] = 75;
 	while (nMotorEncoder[motorD] < -400)
 	{}
-	
+
 	motor[motorD] = 0;
 	nMotorEncoder[motorD] = 0;
 }
 
 double countCoins();
 {
-	
+
 }
 
 task main()
