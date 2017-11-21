@@ -79,7 +79,7 @@ task main()
 
 			if (getButtonPress(buttonRight))
 			{
-				if (numCoffee < 5)
+				if ((numCoffee + numTea) < 5)
 					++numCoffee;
 			}
 			else if (getButtonPress(buttonLeft))
@@ -95,7 +95,7 @@ task main()
 
 			if (getButtonPress(buttonRight))
 			{
-				if (numTea < 5)
+				if ((numCoffee + numTea) < 5)
 					++numTea;
 			}
 			else if (getButtonPress(buttonLeft))
@@ -110,8 +110,6 @@ task main()
 	}
 
 	while(getButtonPress(buttonAny));
-
-	displayBigTextLine(4, "FFFFF");
 
 
 	for (int coffeeCount = 0; coffeeCount < numCoffee; coffeeCount++)
