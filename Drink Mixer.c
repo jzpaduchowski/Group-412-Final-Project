@@ -117,7 +117,7 @@ void valveControl(int valveType, int valvePos)
 }
 
 //receives array with menu selections and calculates the amount of time each valve should be open for in milliseconds
-float drinkVolume(int numMainDrink, int numMilks)
+float pourTime(int numMainDrink, int numMilks)
 {
 	if(numMainDrink == 1)
 	{
