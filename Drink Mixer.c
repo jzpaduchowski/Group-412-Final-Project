@@ -13,6 +13,7 @@ const int cup = 440; //Position of cup dispenser
 const int cupDelivery = 750; //Position to deliver the cup
 const string cupFell = "The cup fell!";
 const string noCups = "No more cups!";
+const float FLOWRATE = 1.0; //mL/s
 //place any constants here pls
 
 
@@ -113,4 +114,17 @@ void valveControl(int valveType, int valvePos)
 		}
 	}
 
+}
+
+//receives array with menu selections and calculates the amount of time each valve should be open for in milliseconds
+float drinkVolume(int numMainDrink, int numMilks)
+{
+	if(numMainDrink == 1)
+	{
+		return (numMainDrink * FLOWRATE * 1000 * 350) - (numMilks * FLOWRATE * 1000 * 10);
+	}
+	else
+	{
+		return (numMilks * FLOWRATE * 1000 * 10);
+	}
 }
