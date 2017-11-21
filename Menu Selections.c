@@ -4,8 +4,8 @@ const int menuTea = 2;
 const int menuMilks = 3;
 const int orderFailed = -1;
 const int orderSuccess = 0;
-
-
+const float coffeePrice = 1.5;
+const float teaPrice = 1.5;
 
 void displayCoffeeTea(int numCoffee, int numTea, int drinkType)
 {
@@ -33,27 +33,25 @@ void displayMilks(int numMilks, int drinkType, int drinkNum)
 }
 
 
-void displayPayment(int orderCost)
+void displayPayment(float orderCost)
 {
 
 	drawBmpfile(0, 127, "menuEmpty");
 
 	if (orderCost == orderFailed)
-		displayBigTextLine(5, "You did not put in enough coins!");
+		displayBigTextLine(7, "You did not put in enough coins!");
 	else if (orderCost == orderSuccess)
 	{
-		displayBigTextLine(5, "Order Success!");
-		displayBigTextLine(8, "Thank you!");
+		displayCenteredBigTextLine(6, "Order Success!");
+		displayCenteredBigTextLine(9, "Thank you!");
 	}
 	else
 	{
-		drawBmpfile(5, 33, "Order Total: ");
-		displayBigTextLine(8, "XXXX");
-
+		displayCenteredBigTextLine(6,"Order Total: ");
+		displayCenteredBigTextLine(9, "$%.2f", orderCost);
+		displayCenteredBigTextLine(12, "Please Pay Now.");
 	}
-
 }
-
 
 task main()
 {
@@ -62,10 +60,9 @@ task main()
 	int selection = menuCoffee;
 	int numMilkCoffee[5] = {0, 0, 0, 0, 0};
 	int numMilkTea[5] = {0, 0, 0, 0, 0};
+	float total = 0;
 
 	displayCoffeeTea(numCoffee, numTea, menuCoffee);
-	displayBigTextLine(1, "FFFFF");
-
 	while (!getButtonPress(buttonEnter))
 	{
 
@@ -110,7 +107,6 @@ task main()
 			displayCoffeeTea(numCoffee, numTea, menuTea);
 
 		}
-
 	}
 
 	while(getButtonPress(buttonAny));
@@ -127,13 +123,17 @@ task main()
 			while (!getButtonPress(buttonAny));
 
 			if (getButtonPress(buttonRight))
+			{
 				if (numMilkCoffee[coffeeCount] < 5)
-				++numMilkCoffee[coffeeCount];
+					++numMilkCoffee[coffeeCount];
+			}
 			else if (getButtonPress(buttonLeft))
+			{
 				if (numMilkCoffee[coffeeCount] > 0)
-				--numMilkCoffee[coffeeCount];
+					--numMilkCoffee[coffeeCount];
+			}
 		}
-		while(getButtonPress(buttonAny));
+		while (getButtonPress(buttonAny));
 	}
 
 	for (int teaCount = 0; teaCount < numTea; teaCount++)
@@ -145,19 +145,32 @@ task main()
 			while (!getButtonPress(buttonAny));
 
 			if (getButtonPress(buttonRight))
+			{
 				if (numMilkTea[teaCount] < 5)
-				++numMilkTea[teaCount];
+					++numMilkTea[teaCount];
+			}
 			else if (getButtonPress(buttonLeft))
+			{
 				if (numMilkTea[teaCount] > 0)
-				--numMilkTea[teaCount];
+					--numMilkTea[teaCount];
+			}
 		}
-		while(getButtonPress(buttonAny));
+		while (getButtonPress(buttonAny));
 	}
 
-	displayBigTextLine(6, "GGGGG");
+	total = (numCoffee * coffeePrice + numTea * teaPrice);
 
-	wait10Msec(1000);
+	displayPayment(total);
 
+	while (!getButtonPress(buttonAny));
+	while (getButtonPress(buttonAny));
+	//##Get payment
+	//if (payment == orderSuccess)
+	displayPayment(orderSuccess);
+	//else (payment == orderFailed);
+	//displayPayment(orderFailed);
 
+	while (!getButtonPress(buttonAny));
+	while (getButtonPress(buttonAny));
 
 }
