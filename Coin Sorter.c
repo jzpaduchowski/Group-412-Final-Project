@@ -1,19 +1,16 @@
-/*
-Port Configuration:
-A - Cart Belt
-B - Valves
-C - Coin Wheel
-D - Coin Measurement
-1 - Cup Colour
-2 - Coin touch sensor
-*/
 
+//############################Start of Coin Sorting Programs##################################
 void initializeCoinSorter()
 {
 	const int initializationReverseTo = -1500;
 	const int initializationResetTo = -400;
 
+	SensorType[S4] = sensorEV3_Touch;
+
+
 	displayBigTextLine(0, "Insert Toonie");
+
+
 	while (!getButtonPress(buttonAny))
 	{}
 	while (getButtonPress(buttonAny))
@@ -21,7 +18,7 @@ void initializeCoinSorter()
 	eraseDisplay();
 
 	motor[motorD] = 75;
-	while(SensorValue[S2] == 0)
+	while(SensorValue[S4] == 0)
 	{}
 
 	//For resetting initializing toonie
@@ -44,17 +41,17 @@ void initializeCoinSorter()
 float countCoins()
 {
 	//Constants for the range of encoder values allowed for each kind of coin
-	const int toonieMin = 350;
-	const int toonieMax = 450;
-	const int loonieMin = 460;
-	const int loonieMax = 590;
-	const int quarterMin = 610;
-	const int quarterMax = 750;
-	const int nickelMin = 800;
-	const int nickelMax = 900;
-	const int dimeMin = 950;
-	const int dimeMax = 1150;
-	const int noCoinMax = 1300;
+	const int TOONIE_MIN = 350;
+	const int TOONIE_MAX = 450;
+	const int LOONIE_MIN = 460;
+	const int LOONIE_MAX = 590;
+	const int QUARTER_MIN = 610;
+	const int QUARTER_MAX = 750;
+	const int NICKEL_MIN = 800;
+	const int NICKEL_MAX = 900;
+	const int DIME_MIN = 950;
+	const int DIME_MAX = 1150;
+	const int NO_COIN_MAX = 1300;
 
 	float totalCoin = 0;
 	int encoderValue = 0;
@@ -68,25 +65,9 @@ float countCoins()
 	while (moreCoins)
 	{
 
-	/*
-		//Spin the coin wheel to drop a coin into the measurement system
-		motor[motorC] = 75;
-		while(nMotorEncoder[motorC] % 60 < 2)
-		{}
-		while(nMotorEncoder[motorC] % 60 > 1)
-		{}
-		motor[motorC] = 0;
-		wait1Msec(1000); //MAKE THIS FASTER AFTER TESTING
-		motor[motorC] = 25;
-		while(nMotorEncoder[motorC] % 120 < 2)
-		{}
-		while (nMotorEncoder[motorC] % 120 > 1)
-		{}
-		motor[motorC] = 0;
-*/
 
 
-		motor[motorC] = 75;
+		motor[motorC] = 60;
 		while (motorPosition + 60 > nMotorEncoder[motorC]);
 
 		motor[motorC] = 0;
@@ -100,44 +81,44 @@ float countCoins()
 
 		//Squeeze the coin and get a motor encoder reading
 		motor[motorD] = 75; //speed up motor speed after testing.
-		while(SensorValue[S2] == 0)
+		while(SensorValue[S4] == 0)
 		{}
 		motor[motorD] = 0;
 		encoderValue = nMotorEncoder[motorD];
 
 		//Add appropriate coin value to the total count
 		int encoderReverse = 0;
-		if (toonieMin < encoderValue && encoderValue < toonieMax)
+		if (TOONIE_MIN < encoderValue && encoderValue < TOONIE_MAX)
 		{
 			totalCoin += 2;
 			encoderReverse = 950;
 		}
-		else if (loonieMin < encoderValue && encoderValue < loonieMax)
+		else if (LOONIE_MIN < encoderValue && encoderValue < LOONIE_MAX)
 		{
 			totalCoin += 1;
 			encoderReverse = 875;
 		}
-		else if (quarterMin < encoderValue && encoderValue < quarterMax)
+		else if (QUARTER_MIN < encoderValue && encoderValue < QUARTER_MAX)
 		{
 			totalCoin += 0.25;
 			encoderReverse = 600;
 		}
-		else if (nickelMin < encoderValue && encoderValue < nickelMax)
+		else if (NICKEL_MIN < encoderValue && encoderValue < NICKEL_MAX)
 		{
 			totalCoin += 0.05;
 			encoderReverse = 400;
 		}
 
-		else if (dimeMin < encoderValue && encoderValue < dimeMax)
+		else if (DIME_MIN < encoderValue && encoderValue < DIME_MAX)
 		{
 			totalCoin += 0.1;
 			encoderReverse = 200;
 		}
-		else if (encoderValue > noCoinMax && totalCoin > 0)
+		else if (encoderValue > NO_COIN_MAX && totalCoin > 0)
 		{
 			moreCoins = false;
 		}
-		else if (encoderValue > noCoinMax)
+		else if (encoderValue > NO_COIN_MAX)
 		{
 			displayTextLine(6, "No coins yet");
 		}
@@ -166,30 +147,4 @@ float countCoins()
 
 	return totalCoin;
 }
-
-
-task main()
-{
-
-	SensorType[S2] = sensorEV3_Touch;
-	initializeCoinSorter();
-
-	float drinkCost = 0;
-	float totalCoin = 0;
-
-
-	//temporary, for testing
-	drinkCost = 5;
-
-	while (!getButtonPress(buttonAny));
-		while (getButtonPress(buttonAny));
-
-
-	while (totalCoin <= drinkCost)
-	{
-		totalCoin += countCoins();
-		displayTextLine(6, "Money Inserted: %f",totalCoin);
-	}
-	displayTextLine(7,"drink can be made now");
-	wait1Msec(60000);
-}
+//############################End of Coin Sorting Programs##################################

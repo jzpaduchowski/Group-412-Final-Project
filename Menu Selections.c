@@ -1,32 +1,37 @@
-const int menuEmpty = 0;
-const int menuCoffee = 1;
-const int menuTea = 2;
-const int menuMilks = 3;
-const int orderFailed = -1;
-const int orderSuccess = 0;
-const float coffeePrice = 1.5;
-const float teaPrice = 1.5;
+const int MENU_EMPTY = 0;
+const int MENU_COFFEE = 1;
+const int MENU_TEA = 2;
+const int MENU_MILKS = 3;
+const int ORDER_FAILED = -1;
+const int ORDER_SUCCESS = 0;
+const float COFFEE_PRICE = 1.5;
+const float TEA_PRICE = 1.5;
 
+
+//############################Start of Order Processing Programs##################################
+//Displays user's selection on how many coffees or teas
 void displayCoffeeTea(int numCoffee, int numTea, int drinkType)
 {
 
-	if (drinkType == menuCoffee)
+
+	if (drinkType == MENU_COFFEE)
 		drawBmpfile(0, 127, "menuCoffee");
-	else if (drinkType == menuTea)
+	else if (drinkType == MENU_TEA)
 		drawBmpfile(0, 127, "menuTea");
 
 	displayBigStringAt(150, 65, "%d", numCoffee);
 	displayBigStringAt(150, 28, "%d", numTea);
 }
 
+//For displaying the number of milks selected for a particular drink
 void displayMilks(int numMilks, int drinkType, int drinkNum)
 {
 
 	drawBmpfile(0, 127, "menuGetMilks");
 
-	if (drinkType == menuCoffee)
+	if (drinkType == MENU_COFFEE)
 		displayBigStringAt(5, 33, "Coffee %d", drinkNum);
-	else if (drinkType == menuTea)
+	else if (drinkType == MENU_TEA)
 		displayBigStringAt(5, 33, "Tea %d", drinkNum);
 
 	displayBigStringAt(152, 30, "%d", numMilks);
@@ -38,9 +43,9 @@ void displayPayment(float orderCost)
 
 	drawBmpfile(0, 127, "menuEmpty");
 
-	if (orderCost == orderFailed)
+	if (orderCost == ORDER_FAILED)
 		displayBigTextLine(7, "You did not put in enough coins!");
-	else if (orderCost == orderSuccess)
+	else if (orderCost == ORDER_SUCCESS)
 	{
 		displayCenteredBigTextLine(6, "Order Success!");
 		displayCenteredBigTextLine(9, "Thank you!");
@@ -53,122 +58,14 @@ void displayPayment(float orderCost)
 	}
 }
 
-task main()
+//Displays the payment and value of coins inserted
+void displayPayment(float orderCost, float coinsInserted)
 {
-	int numTea = 0;
-	int numCoffee = 0;
-	int selection = menuCoffee;
-	int numMilkCoffee[5] = {0, 0, 0, 0, 0};
-	int numMilkTea[5] = {0, 0, 0, 0, 0};
-	float total = 0;
 
-	displayCoffeeTea(numCoffee, numTea, menuCoffee);
-	while (!getButtonPress(buttonEnter))
-	{
-
-		while (getButtonPress(buttonAny));
-		while (!getButtonPress(buttonAny));
-
-		if (getButtonPress(buttonUp))
-			selection = menuCoffee;
-		else if (getButtonPress(buttonDown))
-			selection = menuTea;
-
-		if (selection == menuCoffee)
-		{
-
-			if (getButtonPress(buttonRight))
-			{
-				if ((numCoffee + numTea) < 5)
-					++numCoffee;
-			}
-			else if (getButtonPress(buttonLeft))
-			{
-				if (numCoffee > 0)
-					--numCoffee;
-			}
-
-			displayCoffeeTea(numCoffee, numTea, menuCoffee);
-		}
-		else if (selection == menuTea)
-		{
-
-			if (getButtonPress(buttonRight))
-			{
-				if ((numCoffee + numTea) < 5)
-					++numTea;
-			}
-			else if (getButtonPress(buttonLeft))
-			{
-				if (numTea > 0)
-					--numTea;
-			}
-
-			displayCoffeeTea(numCoffee, numTea, menuTea);
-
-		}
-	}
-
-	while(getButtonPress(buttonAny));
-
-
-	for (int coffeeCount = 0; coffeeCount < numCoffee; coffeeCount++)
-	{
-		while(!getButtonPress(buttonEnter))
-		{
-			displayMilks(numMilkCoffee[coffeeCount], menuCoffee, (coffeeCount + 1));
-			while (getButtonPress(buttonAny));
-			while (!getButtonPress(buttonAny));
-
-			if (getButtonPress(buttonRight))
-			{
-				if (numMilkCoffee[coffeeCount] < 5)
-					++numMilkCoffee[coffeeCount];
-			}
-			else if (getButtonPress(buttonLeft))
-			{
-				if (numMilkCoffee[coffeeCount] > 0)
-					--numMilkCoffee[coffeeCount];
-			}
-		}
-		while (getButtonPress(buttonAny));
-	}
-
-	for (int teaCount = 0; teaCount < numTea; teaCount++)
-	{
-		while(!getButtonPress(buttonEnter))
-		{
-			displayMilks(numMilkTea[teaCount], menuTea, (teaCount + 1));
-			while (getButtonPress(buttonAny));
-			while (!getButtonPress(buttonAny));
-
-			if (getButtonPress(buttonRight))
-			{
-				if (numMilkTea[teaCount] < 5)
-					++numMilkTea[teaCount];
-			}
-			else if (getButtonPress(buttonLeft))
-			{
-				if (numMilkTea[teaCount] > 0)
-					--numMilkTea[teaCount];
-			}
-		}
-		while (getButtonPress(buttonAny));
-	}
-
-	total = (numCoffee * coffeePrice + numTea * teaPrice);
-
-	displayPayment(total);
-
-	while (!getButtonPress(buttonAny));
-	while (getButtonPress(buttonAny));
-	//##Get payment
-	//if (payment == orderSuccess)
-	displayPayment(orderSuccess);
-	//else (payment == orderFailed);
-	//displayPayment(orderFailed);
-
-	while (!getButtonPress(buttonAny));
-	while (getButtonPress(buttonAny));
+	drawBmpfile(0, 127, "menuEmpty");
+	displayCenteredBigTextLine(6,"Order Total: ");
+	displayCenteredBigTextLine(9, "$%.2f", orderCost);
+	displayCenteredBigTextLine(12, "Coins Left: $%.2f", orderCost);
 
 }
+//############################End of Order Processing Programs##################################
