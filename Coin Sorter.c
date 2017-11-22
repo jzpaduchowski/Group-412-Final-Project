@@ -1,5 +1,34 @@
-
 //############################Start of Coin Sorting Programs##################################
+
+void advanceCoin(int & motorPosition)
+{
+		motor[motorC] = 60;
+
+		while (nMotorEncoder[motorC] < 60);
+		motor[motorC] = 0;
+		wait1Msec(300);
+
+		motor[motorC] = 25;
+
+		while (nMotorEncoder[motorC] < 80);
+		motor[motorC] = 0;
+
+		motor[motorC] = -25;
+		while (nMotorEncoder[motorC] > 0);
+		motor[motorC] = 0;
+
+		/*
+		while (motorPosition + 60 > nMotorEncoder[motorC]);
+
+		motor[motorC] = 0;
+		wait1Msec(500); //MAKE THIS FASTER AFTER TESTING
+		motor[motorC] = 25;
+
+		while (motorPosition + 120 > nMotorEncoder[motorC]);
+		motor[motorC] = 0;
+		*/
+}
+
 void initializeCoinSorter()
 {
 	const int initializationReverseTo = -1500;
@@ -15,6 +44,7 @@ void initializeCoinSorter()
 	{}
 	while (getButtonPress(buttonAny))
 	{}
+
 	eraseDisplay();
 
 	motor[motorD] = 75;
@@ -38,7 +68,10 @@ void initializeCoinSorter()
 	eraseDisplay();
 }
 
-float countCoins()
+
+
+
+float countCoins(float payTotal)
 {
 	//Constants for the range of encoder values allowed for each kind of coin
 	const int TOONIE_MIN = 350;
@@ -66,23 +99,13 @@ float countCoins()
 	{
 
 
-
-		motor[motorC] = 60;
-		while (motorPosition + 60 > nMotorEncoder[motorC]);
-
-		motor[motorC] = 0;
-		wait1Msec(500); //MAKE THIS FASTER AFTER TESTING
-		motor[motorC] = 25;
-
-		while (motorPosition + 120 > nMotorEncoder[motorC]);
-		motor[motorC] = 0;
-
-
+		advanceCoin(motorPosition);
 
 		//Squeeze the coin and get a motor encoder reading
 		motor[motorD] = 75; //speed up motor speed after testing.
 		while(SensorValue[S4] == 0)
 		{}
+
 		motor[motorD] = 0;
 		encoderValue = nMotorEncoder[motorD];
 
@@ -91,44 +114,43 @@ float countCoins()
 		if (TOONIE_MIN < encoderValue && encoderValue < TOONIE_MAX)
 		{
 			totalCoin += 2;
-			encoderReverse = 950;
+			encoderReverse = 1100;
 		}
 		else if (LOONIE_MIN < encoderValue && encoderValue < LOONIE_MAX)
 		{
 			totalCoin += 1;
-			encoderReverse = 875;
+			encoderReverse = 925;
 		}
 		else if (QUARTER_MIN < encoderValue && encoderValue < QUARTER_MAX)
 		{
 			totalCoin += 0.25;
-			encoderReverse = 600;
+			encoderReverse = 750;
 		}
 		else if (NICKEL_MIN < encoderValue && encoderValue < NICKEL_MAX)
 		{
 			totalCoin += 0.05;
-			encoderReverse = 400;
+			encoderReverse = 550;
 		}
 
 		else if (DIME_MIN < encoderValue && encoderValue < DIME_MAX)
 		{
 			totalCoin += 0.1;
-			encoderReverse = 200;
+			encoderReverse = 300;
 		}
-		else if (encoderValue > NO_COIN_MAX && totalCoin > 0)
+		else if (encoderValue > NO_COIN_MAX && totalCoin >= payTotal)
 		{
 			moreCoins = false;
 		}
 		else if (encoderValue > NO_COIN_MAX)
 		{
-			displayTextLine(6, "No coins yet");
+			//displayTextLine(6, "No coins yet");
 		}
 		else
 		{
-			displayBigTextLine(6, "?????");
+			displayBigTextLine(6, "Coin error");
 		}
 
-		//for testing only
-		displayTextLine(4, "current total: %f",totalCoin);
+		displayPayment(payTotal, totalCoin);
 
 		//Drop coin and reset coin measurement system
 		motor[motorD] = -75;
@@ -142,9 +164,6 @@ float countCoins()
 		motorPosition = nMotorEncoder[motorC];
 
 	}
-
-
-
 	return totalCoin;
 }
 //############################End of Coin Sorting Programs##################################
