@@ -11,8 +11,9 @@ const int DRINK_TYPE = 1;
 const int MILK_TYPE = 110; //Position of milk location
 const int CUP_POS = 440; //Position of cup dispenser
 const int CUP_DELIVERY_POS = 750; //Position to deliver the cup
-const string CUP_FELL_ERROR = "The cup fell!";
-const string NO_CUP_ERROR = "No more cups!";
+string CUP_FELL_ERROR = "The cup fell!";
+string NO_CUP_ERROR = "No more cups!";
+string CUP_EXISTS_ERROR = "Cup exists!"
 const float FLOWRATE_DRINK = 23.33; //mL/s
 const float FLOWRATE_MILK = 8; //mL/s
 const int OPEN_POS = 1;
@@ -37,15 +38,20 @@ void wait4Button()
 	while (getButtonPress(buttonAny));
 }
 
-void errorMessage(const string * errorCode)
+void errorMessage(string errorCode)
 {
-	drawBmpfile(0, 127, "menuEmpty");
 
-	displayCenteredBigTextLine(7, "ERROR!");
-	displayCenteredBigTextLine(9, "Error: %s", errorCode);
-	displayCenteredTextLine(12, "Press to resolve");
+	playSoundFile("Ouch");
+
+	displayCenteredTextLine(13, "ERROR!");
+	displayCenteredTextLine(14, "%s", errorCode);
+	displayCenteredTextLine(15, "Press to resolve");
 
 	wait4Button();
+	displayTextLine(13, " ");
+	displayTextLine(14, " ");
+	displayTextLine(15, " ");
+
 }
 
 //receives array with menu selections and calculates the amount of time each valve should be open for in milliseconds
@@ -57,7 +63,7 @@ float pourTime(int valveType, int numMilks)
 	{
 		//Returns the time it takes to fill a cup with drink according to equation:
 		//time = flowrate (in ml/s) * 1000ms * 350ml - numMilks * 1000ms * 10ml
-		timeToPour = ((350.0 * 1000.0) / FLOWRATE_DRINK) - ((numMilks * 10 * 1000.0) / FLOWRATE_MILK);
+		timeToPour = ((350.0 - (numMilks * 10))* 1000.0) / FLOWRATE_DRINK;
 	}
 	else if (numMilks > 0)
 	{
@@ -99,39 +105,43 @@ void detectCupError (int errorProtocol, int drinkSelect, int numMilks)
 		if (errorProtocol == CARTCONTROL_ERROR)
 		{
 			errorMessage(CUP_FELL_ERROR);
-			wait4Button();
-			//Gets a new cup
-			getCup();
-			wait4Button();
+
 			//Gets the new drink again
 			cartControl(drinkSelect, numMilks);
 		}
 	}
 }
 
-
 void goTo(int pos)
 {
 	//Sets the direction to go backwards or forwards
 	int direction = 1;
 
+	bool hasCup = true;
+
 	if (pos < nMotorEncoder[motorA])
 		direction = -1;
 
+
+	if (SensorValue[S1] == 0)
+	{
+		hasCup = false;
+	}
+
 	motor[motorA] = CART_SPEED * direction;
-	while (abs(nMotorEncoder[motorA] - pos) > CART_SPEED * 2);
+	while (abs(nMotorEncoder[motorA] - pos) > CART_SPEED * 2 && !(SensorValue[S1] == 0 && hasCup));
 
 	//Impementing slow stopping
-	while ((abs(nMotorEncoder[motorA] - pos) / 2) < CART_SPEED * 2 + 5 && abs(nMotorEncoder[motorA] - pos) >= 2)
+	while ((abs(nMotorEncoder[motorA] - pos) / 2) < CART_SPEED * 2 + 5 && abs(nMotorEncoder[motorA] - pos) > 1 && !(SensorValue[S1] == 0 && hasCup))
 	{
 		motor[motorA] = (1.0 * pos - nMotorEncoder[motorA]) / 2;
 	}
 	motor[motorA] = 0;
 
-	if (pos != CUP_POS)
+	if (false && hasCup)
 		detectCupError(GOTO_ERROR, pos);
-}
 
+}
 
 
 void operateValve(int toOpen, int valveType)
@@ -172,7 +182,7 @@ void operateValve(int toOpen, int valveType)
 		else if (valveType == MILK_TYPE)
 		{
 			motor[motorB] = -33;
-			while(nMotorEncoder[motorB] > -8);
+			while(nMotorEncoder[motorB] > -10);
 			motor[motorB] = 15;
 			while(nMotorEncoder[motorB] < 0);
 			motor[motorB] = 0;
@@ -189,14 +199,26 @@ void operateValve(int toOpen, int valveType)
 }
 
 
-
 void getCup()
 {
 	goTo(CUP_POS);
+
+	if (SensorValue[S1] != 0)
+	{
+
+		errorMessage(CUP_EXISTS_ERROR);
+		goTo(CUP_DELIVERY_POS);
+		while (SensorValue[S1] != 0);
+		wait1Msec(1000);
+		goTo(CUP_POS);
+
+	}
+
 	operateValve(OPEN_POS, CUP_POS);
-	wait1Msec(500);
+	wait1Msec(250);
 	operateValve(CLOSE_POS, CUP_POS);
 
+	wait1Msec(250);
 	detectCupError(GETCUP_ERROR);
 }
 
@@ -207,7 +229,6 @@ void cartControl(int drinkSelect, int numMilk)
 {
 
 	getCup();
-
 
 	goTo(drinkSelect);
 
@@ -226,7 +247,7 @@ void cartControl(int drinkSelect, int numMilk)
 	}
 
 	//Detects if the cup disappeared during the pouring process
-	detectCupError(CARTCONTROL_ERROR, drinkSelect, numMilk);
+	detectCupError(CARTCONTROL_ERROR, drinkSelect, 0);
 
 	if (numMilk > 0 && SensorValue[S1] != 0)
 	{
@@ -234,17 +255,27 @@ void cartControl(int drinkSelect, int numMilk)
 		clearTimer(T1);
 
 		operateValve(OPEN_POS, MILK_TYPE);
-		while (time1[T1] < 2000 && time1[T1] < timeToPourMilk && SensorValue[S1] != 0);
+		while (time1[T1] < 6000 && time1[T1] < timeToPourMilk && SensorValue[S1] != 0);
 		operateValve(CLOSE_POS, MILK_TYPE);
 
 		detectCupError(CARTCONTROL_ERROR, drinkSelect, numMilk);
 	}
 
-	goTo(CUP_DELIVERY_POS);
-	while (SensorValue[S1] != 0);
-
-	wait1Msec(750);
-
-	goTo(CUP_POS);
+	//If a cup is in the cart, it will deliver the drink
+	if (SensorValue[S1] != 0)
+	{
+		//Goes to deliver the drink
+		goTo(CUP_DELIVERY_POS);
+		//It will wait
+		clearTimer(T1);
+		while ((time1[T1] < 1500))
+		{
+			if (SensorValue[S1] != 0)
+			{
+				clearTimer(T1);
+			}
+		}
+		goTo(CUP_POS);
+	}
 
 }

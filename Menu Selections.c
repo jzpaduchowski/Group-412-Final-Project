@@ -66,7 +66,7 @@ void displayPayment(float orderCost, float coinsInserted)
 	drawBmpfile(0, 127, "menuEmpty");
 	displayCenteredBigTextLine(6,"Order Total: ");
 	displayCenteredBigTextLine(9, "$%.2f", orderCost);
-	displayCenteredBigTextLine(12, "Coins Left: $%.2f", orderCost);
+	displayCenteredBigTextLine(12, "Owing: $%.2f", (orderCost - coinsInserted);
 
 }
 
@@ -90,24 +90,30 @@ void endCustomer()
 
 	drawBmpfile(0, 127, "menuEmpty");
 	displayCenteredBigTextLine(8,"Thank you!");
-	displayCenteredBigTextLine(11, "Please come again!");
-
+	displayCenteredBigTextLine(11, "Goodbye!");
 
 }
 
 
 
 
-void getDrinkSelections(int & numCoffee, int & numTea)
+bool getDrinkSelections(int & numCoffee, int & numTea)
 {
 	int selection = MENU_COFFEE;
+	bool isQuit = false;
 
 	displayCoffeeTea(numCoffee, numTea, MENU_COFFEE);
-	while (!getButtonPress(buttonEnter))
+	while ((!getButtonPress(buttonEnter) || ((numCoffee + numTea) < 1)) && !isQuit )
 	{
 
-		while (getButtonPress(buttonAny));
-		while (!getButtonPress(buttonAny));
+		while (getButtonPress(buttonAny) && !(getButtonPress(buttonUp) && getButtonPress(buttonDown)));
+
+		if (getButtonPress(buttonUp) && getButtonPress(buttonDown))
+		{
+			isQuit = true;
+		}
+		while (!getButtonPress(buttonAny) && !isQuit);
+
 
 		if (getButtonPress(buttonUp))
 			selection = MENU_COFFEE;
@@ -148,8 +154,9 @@ void getDrinkSelections(int & numCoffee, int & numTea)
 
 		}
 	}
-
 	while(getButtonPress(buttonAny));
+
+	return isQuit;
 }
 
 void getMilkSelections(int numCoffee, int numTea, int* numMilkCoffee, int* numMilkTea)
@@ -163,17 +170,25 @@ void getMilkSelections(int numCoffee, int numTea, int* numMilkCoffee, int* numMi
 			while (getButtonPress(buttonAny));
 			while (!getButtonPress(buttonAny));
 
-			if (getButtonPress(buttonRight))
+			if (getButtonPress(buttonRight) || getButtonPress(buttonUp))
 			{
 				if (numMilkCoffee[coffeeCount] < 5)
 					++numMilkCoffee[coffeeCount];
+
 			}
-			else if (getButtonPress(buttonLeft))
+			else if (getButtonPress(buttonLeft) || getButtonPress(buttonDown))
 			{
 				if (numMilkCoffee[coffeeCount] > 0)
 					--numMilkCoffee[coffeeCount];
 			}
 		}
+
+		if (numMilkCoffee[coffeeCount] == 5)
+		{
+			playSoundFile("Okey-dokey");
+			sleep(800);
+		}
+
 		while (getButtonPress(buttonAny));
 	}
 
@@ -195,6 +210,11 @@ void getMilkSelections(int numCoffee, int numTea, int* numMilkCoffee, int* numMi
 				if (numMilkTea[teaCount] > 0)
 					--numMilkTea[teaCount];
 			}
+		}
+		if (numMilkTea[teaCount] == 5)
+		{
+			playSoundFile("Okey-dokey");
+			sleep(800);
 		}
 		while (getButtonPress(buttonAny));
 	}

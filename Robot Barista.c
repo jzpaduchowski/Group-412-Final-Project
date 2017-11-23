@@ -15,14 +15,17 @@ D - Coin Measurement
 //############################Start of Main##################################
 task main()
 {
+	setSoundVolume(75);
 
-	initializeCoinSorter();
+	setLEDColor(ledOff);
+
+
+	//initializeCoinSorter();
 
 	nMotorEncoder[motorA] = 0;
 	nMotorEncoder[motorB] = 0;
 	nMotorEncoder[motorC] = 0;
 	nMotorEncoder[motorD] = 0;
-
 
 	int numTea = 0;
 	int numCoffee = 0;
@@ -33,9 +36,10 @@ task main()
 
 	int numMilkCoffee[5];
 	int numMilkTea[5];
+	int isNotQuit = true;
 
 
-	while (true)
+	while (isNotQuit)
 	{
 		for (int index = 0; index < 5; index++)
 		{
@@ -49,51 +53,62 @@ task main()
 		drinkCost = 0;
 		totalCoin = 0;
 
-		getDrinkSelections(numCoffee, numTea);
-
-
-		getMilkSelections(numCoffee, numTea, numMilkCoffee, numMilkTea);
-
-
-		total = (numCoffee * COFFEE_PRICE + numTea * TEA_PRICE);
-
-		while(getButtonPress(buttonAny));
-
-		displayPayment(total);
-
-		while(!getButtonPress(buttonAny));
-		while(getButtonPress(buttonAny));
-
-		///////////////////////////////////Coin Sorting
-		///*
-
-
-		while (totalCoin < total)
+		if (!getDrinkSelections(numCoffee, numTea))
 		{
-			totalCoin += countCoins(total);
-			displayPayment(total, totalCoin);
+			getMilkSelections(numCoffee, numTea, numMilkCoffee, numMilkTea);
+
+
+			total = (numCoffee * COFFEE_PRICE + numTea * TEA_PRICE);
+
+			while(getButtonPress(buttonAny));
+
+			displayPayment(total);
+
+			while(!getButtonPress(buttonAny));
+			while(getButtonPress(buttonAny));
+
+			///////////////////////////////////Coin Sorting
+			/*
+
+
+			while (totalCoin < total)
+			{
+				totalCoin += countCoins(total);
+				displayPayment(total, totalCoin);
+			}
+
+			displayPayment(ORDER_SUCCESS);
+
+			*/
+			//////////////////////////////////////End Coin sorting
+
+			for (int coffeeCount = 0; coffeeCount < numCoffee; coffeeCount++)
+			{
+				dispProgress(false, COFFEE_TYPE, coffeeCount + 1);
+				cartControl(COFFEE_TYPE, numMilkCoffee[coffeeCount]);
+				dispProgress(true, COFFEE_TYPE, coffeeCount + 1);
+			}
+
+			for (int teaCount = 0; teaCount < numTea; teaCount++)
+			{
+				dispProgress(false, TEA_TYPE, teaCount + 1);
+				cartControl(TEA_TYPE, numMilkTea[teaCount]);
+				dispProgress(true, TEA_TYPE, teaCount + 1);
+			}
+
+			endCustomer();
+
+		}
+		else
+		{
+			isNotQuit = false;
+
+			endCustomer();
+
+			goTo(0);
 		}
 
-		displayPayment(ORDER_SUCCESS);
 
-		//*/
-		//////////////////////////////////////End Coin sorting
-
-		for (int coffeeCount = 0; coffeeCount < numCoffee; coffeeCount++)
-		{
-			dispProgress(false, COFFEE_TYPE, coffeeCount + 1);
-			cartControl(COFFEE_TYPE, numMilkCoffee[coffeeCount]);
-			dispProgress(true, COFFEE_TYPE, coffeeCount + 1);
-		}
-
-		for (int teaCount = 0; teaCount < numTea; teaCount++)
-		{
-			dispProgress(false, TEA_TYPE, teaCount + 1);
-			cartControl(TEA_TYPE, numMilkTea[teaCount]);
-			dispProgress(true, TEA_TYPE, teaCount + 1);
-		}
-
-		displayPayment(ORDER_SUCCESS);
 
 
 	}

@@ -32,6 +32,8 @@ void initializeCoinSorter()
 	while (getButtonPress(buttonAny))
 	{}
 
+	advanceCoin();
+
 	eraseDisplay();
 
 	motor[motorD] = 75;
