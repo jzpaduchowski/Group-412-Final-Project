@@ -8,7 +8,14 @@ void advanceCoin()
 
 		while (nMotorEncoder[motorC] < 45);
 		motor[motorC] = 0;
+		/*
+		wait1Msec(300);
 
+		motor[motorC] = 25;
+
+		while (nMotorEncoder[motorC] < 80);
+		motor[motorC] = 0;
+		*/
 
 		motor[motorC] = -40;
 		while (nMotorEncoder[motorC] > 0);
@@ -18,19 +25,22 @@ void advanceCoin()
 
 void initializeCoinSorter()
 {
+
 	const int initializationReverseTo = -1500;
 	const int initializationResetTo = -400;
 
 	SensorType[S4] = sensorEV3_Touch;
 
 
-	displayBigTextLine(3, "Insert Toonie");
+	displayBigTextLine(0, "Insert Toonie");
+
 
 
 	while (!getButtonPress(buttonAny))
 	{}
 	while (getButtonPress(buttonAny))
 	{}
+advanceCoin();
 
 	eraseDisplay();
 
@@ -137,8 +147,6 @@ float countCoins(float payTotal)
 			displayBigTextLine(6, "Coin error");
 		}
 
-		displayPayment(payTotal, totalCoin);
-
 		//Drop coin and reset coin measurement system
 		motor[motorD] = -75;
 		while(nMotorEncoder[motorD] > -encoderReverse)
@@ -154,3 +162,32 @@ float countCoins(float payTotal)
 	return totalCoin;
 }
 //############################End of Coin Sorting Programs##################################
+
+
+
+task main()
+{
+
+initializeCoinSorter();
+
+nMotorEncoder[motorA] = 0;
+nMotorEncoder[motorB] = 0;
+nMotorEncoder[motorC] = 0;
+nMotorEncoder[motorD] = 0;
+
+
+	float total = 5;
+
+
+	float drinkCost = 0;
+	float totalCoin = 0;
+
+	while (totalCoin < total)
+	{
+		totalCoin += countCoins(total);
+		displayBigTextLine(1, "%d", totalCoin);
+
+	}
+
+
+}

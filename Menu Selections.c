@@ -6,6 +6,8 @@ const int ORDER_FAILED = -1;
 const int ORDER_SUCCESS = 0;
 const float COFFEE_PRICE = 1.5;
 const float TEA_PRICE = 1.5;
+const int COFFEE_TYPE = 0;
+const int TEA_TYPE = 220;
 
 
 //############################Start of Order Processing Programs##################################
@@ -47,7 +49,7 @@ void displayPayment(float orderCost)
 	else if (orderCost == ORDER_SUCCESS)
 	{
 		displayCenteredBigTextLine(6, "Order Success!");
-		displayCenteredBigTextLine(9, "Thank you!");
+		displayCenteredBigTextLine(9, "Making order...");
 	}
 	else
 	{
@@ -68,10 +70,37 @@ void displayPayment(float orderCost, float coinsInserted)
 
 }
 
+void dispProgress(bool isReady, int drink, int drinkNum)
+{
+	drawBmpfile(0, 127, "menuEmpty");
+
+	if (isReady == false)
+		displayCenteredBigTextLine(6,"Now Preparing:");
+	else if (isReady == true)
+		displayCenteredBigTextLine(6,"Please take:");
+
+	if (drink == COFFEE_TYPE)
+		displayCenteredBigTextLine(9, "Coffee %d", drinkNum);
+	else if (drink == TEA_TYPE)
+		displayCenteredBigTextLine(9, "Tea %d", drinkNum);
+}
+
+void endCustomer()
+{
+
+	drawBmpfile(0, 127, "menuEmpty");
+	displayCenteredBigTextLine(8,"Thank you!");
+	displayCenteredBigTextLine(11, "Please come again!");
+
+
+}
+
+
+
+
 void getDrinkSelections(int & numCoffee, int & numTea)
 {
 	int selection = MENU_COFFEE;
-
 
 	displayCoffeeTea(numCoffee, numTea, MENU_COFFEE);
 	while (!getButtonPress(buttonEnter))
@@ -170,18 +199,5 @@ void getMilkSelections(int numCoffee, int numTea, int* numMilkCoffee, int* numMi
 		while (getButtonPress(buttonAny));
 	}
 }
-
-
-void userInput()
-{
-
-
-
-}
-
-
-
-
-
 
 //############################End of Order Processing Programs##################################

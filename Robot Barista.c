@@ -16,7 +16,7 @@ D - Coin Measurement
 task main()
 {
 
-	//initializeCoinSorter();
+	initializeCoinSorter();
 
 	nMotorEncoder[motorA] = 0;
 	nMotorEncoder[motorB] = 0;
@@ -70,11 +70,12 @@ task main()
 
 		while (totalCoin < total)
 		{
-		totalCoin += countCoins(total);
-		displayPayment(total, totalCoin);
+			totalCoin += countCoins(total);
+			displayPayment(total, totalCoin);
 		}
 
 		displayPayment(ORDER_SUCCESS);
+
 		//*/
 		//////////////////////////////////////End Coin sorting
 
