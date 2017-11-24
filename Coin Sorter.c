@@ -79,7 +79,7 @@ float countCoins(float payTotal)
 	const int NICKEL_MAX = 900;
 	const int DIME_MIN = 950;
 	const int DIME_MAX = 1150;
-	const int NO_COIN_MAX = 1300;
+	const int NO_COIN_MAX = 1250;
 
 	float totalCoin = 0;
 	int encoderValue = 0;
@@ -92,7 +92,6 @@ float countCoins(float payTotal)
 
 	while (moreCoins)
 	{
-
 
 		advanceCoin();
 

@@ -19,9 +19,12 @@ task main()
 
 	setLEDColor(ledOff);
 
+	SensorType[S1] = sensorEV3_Color;
+	wait1Msec(50);
+	SensorMode[S1] = modeEV3Color_Color;
+	wait1Msec(50);
+
 	SensorType[S2] = sensorEV3_Touch;
-
-
 
 	nMotorEncoder[motorA] = 0;
 	nMotorEncoder[motorB] = 0;
@@ -39,11 +42,8 @@ task main()
 	int numMilkTea[5];
 	int isNotQuit = true;
 
-
-
 	//initializeCoinSorter();
 	calibrateCart();
-
 
 	while (isNotQuit)
 	{
@@ -66,8 +66,8 @@ task main()
 
 			total = (numCoffee * COFFEE_PRICE + numTea * TEA_PRICE);
 
-			while(getButtonPress(buttonAny));
-
+			while(getButtonPress(buttonAny))
+			{}
 			displayPayment(total);
 
 			//while(!getButtonPress(buttonAny));
@@ -79,12 +79,12 @@ task main()
 
 			while (totalCoin < total)
 			{
-				totalCoin += countCoins(total);
-				if (totalCoin < 0)
-				{
-					totalCoin == 0;
-				}
-				displayPayment(total, totalCoin);
+			totalCoin += countCoins(total);
+			if (totalCoin < 0)
+			{
+			totalCoin == 0;
+			}
+			displayPayment(total, totalCoin);
 			}
 
 			displayPayment(ORDER_SUCCESS);
@@ -113,7 +113,7 @@ task main()
 
 			endCustomer();
 
-			goTo(0);
+			goTo(20);
 		}
 	}
 }

@@ -119,8 +119,9 @@ void detectCupError (int errorProtocol, int pos)
 	}
 }
 
-void detectCupError (int errorProtocol, int drinkSelect, int numMilks)
+bool detectCupError (int errorProtocol, int drinkSelect, int numMilks)
 {
+	bool isError = false;
 	if (SensorValue[S1] == 0)
 	{
 		if (errorProtocol == CARTCONTROL_ERROR)
@@ -129,8 +130,10 @@ void detectCupError (int errorProtocol, int drinkSelect, int numMilks)
 
 			//Gets the new drink again
 			cartControl(drinkSelect, numMilks);
+			isError = true;
 		}
 	}
+	return isError;
 }
 
 
@@ -177,9 +180,6 @@ void goTo(int pos)
 	{
 		detectCupError(GOTO_ERROR, pos);
 	}
-
-	wait1Msec(150);
-
 }
 
 
@@ -272,7 +272,6 @@ void getCup()
 	detectCupError(GETCUP_ERROR);
 }
 
-
 //This is the main drink preparation function. Given the drink type and number of milks, the robot will go and prepare that drink.
 void cartControl(int drinkSelect, int numMilk)
 {
@@ -282,6 +281,7 @@ void cartControl(int drinkSelect, int numMilk)
 
 	float timeToPourDrink = pourTime(DRINK_TYPE, numMilk);
 	float timeToPourMilk = pourTime(0, numMilk);
+	bool wasError = false;
 
 	//Operates the drink valve if the cup is there
 	if ((drinkSelect == COFFEE_TYPE || drinkSelect == TEA_TYPE) && SensorValue[S1] != 0)
@@ -295,25 +295,27 @@ void cartControl(int drinkSelect, int numMilk)
 		operateValve(CLOSE_POS, DRINK_TYPE);
 	}
 
-
+wasError = detectCupError(CARTCONTROL_ERROR, drinkSelect, numMilk);
 
 	//Detects if the cup disappeared during/after the pouring process
-	detectCupError(CARTCONTROL_ERROR, drinkSelect, 0);
-
-	if (numMilk > 0 && SensorValue[S1] != 0)
+	//Continues if there was no error
+	if (!wasError)
 	{
-		goTo(MILK_TYPE);
+		if (numMilk > 0 && SensorValue[S1] != 0)
+		{
+			goTo(MILK_TYPE);
 
-		detectCupError(CARTCONTROL_ERROR, drinkSelect, 0);
+			detectCupError(CARTCONTROL_ERROR, drinkSelect, 0);
 
-		clearTimer(T1);
+			clearTimer(T1);
 
-		operateValve(OPEN_POS, MILK_TYPE);
-		while (time1[T1] < 6000 && time1[T1] < timeToPourMilk && SensorValue[S1] != 0)
-		{}
-		operateValve(CLOSE_POS, MILK_TYPE);
+			operateValve(OPEN_POS, MILK_TYPE);
+			while (time1[T1] < 6000 && time1[T1] < timeToPourMilk && SensorValue[S1] != 0)
+			{}
+			operateValve(CLOSE_POS, MILK_TYPE);
 
-		detectCupError(CARTCONTROL_ERROR, drinkSelect, numMilk);
+			detectCupError(CARTCONTROL_ERROR, drinkSelect, numMilk);
+		}
 	}
 
 	//If a cup is in the cart, it will deliver the drink
@@ -321,6 +323,8 @@ void cartControl(int drinkSelect, int numMilk)
 	{
 		//Goes to deliver the drink
 		goTo(CUP_DELIVERY_POS);
+
+		detectCupError(CARTCONTROL_ERROR, drinkSelect, numMilk);
 
 		dispIsReady();
 

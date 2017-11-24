@@ -36,10 +36,9 @@ void displayMilks(int numMilks, int drinkType, int drinkNum)
 	displayBigStringAt(152, 30, "%d", numMilks);
 }
 
-
+//Shows order progress
 void displayPayment(float orderCost)
 {
-
 	drawBmpfile(0, 127, "menuEmpty");
 
 	if (orderCost == ORDER_FAILED)
@@ -60,7 +59,6 @@ void displayPayment(float orderCost)
 //Displays the payment and value of coins inserted
 void displayPayment(float orderCost, float coinsInserted)
 {
-
 	drawBmpfile(0, 127, "menuEmpty");
 	displayCenteredBigTextLine(6,"Order Total: ");
 	displayCenteredBigTextLine(9, "$%.2f", orderCost);
@@ -74,17 +72,15 @@ void displayPayment(float orderCost, float coinsInserted)
 	}
 }
 
+//Shows which product is being made at the current time
 void dispProgress(int drink, int drinkNum)
 {
-
-
 	drawBmpfile(0, 127, "menuEmpty");
 	displayCenteredBigTextLine(6,"Now Preparing:");
 	if (drink == COFFEE_TYPE)
 		displayCenteredBigTextLine(9, "Coffee %d", drinkNum);
 	else if (drink == TEA_TYPE)
 		displayCenteredBigTextLine(9, "Tea %d", drinkNum);
-
 }
 
 void dispIsReady()
@@ -93,7 +89,7 @@ void dispIsReady()
 	displayCenteredBigTextLine(6,"Please take:");
 }
 
-
+//Showing end protocols
 void endCustomer()
 {
 	drawBmpfile(0, 127, "menuEmpty");
@@ -102,29 +98,33 @@ void endCustomer()
 
 }
 
-
-
-
+//Gets the user's drink selections for number of cofee and tea
 bool getDrinkSelections(int & numCoffee, int & numTea)
 {
 	int selection = MENU_COFFEE;
 	bool isQuit = false;
 
+	//Displays the selection and the number of drinks
 	displayCoffeeTea(numCoffee, numTea, MENU_COFFEE);
+
+	//Stays on selection while the user does not press the enter button to confirm, and the operators do not quit the robot.
 	while ((!getButtonPress(buttonEnter) || ((numCoffee + numTea) < 1)) && !isQuit )
 	{
-
+		//Stays on a button press and checks for button and button down presses
 		while (getButtonPress(buttonAny) && !(getButtonPress(buttonUp) && getButtonPress(buttonDown)))
 		{}
 
+		//Sets the quitting flag to true
 		if (getButtonPress(buttonUp) && getButtonPress(buttonDown))
 		{
 			isQuit = true;
 		}
+
+		//Waits for the user to click a button
 		while (!getButtonPress(buttonAny) && !isQuit)
 		{}
 
-
+		//
 		if (getButtonPress(buttonUp))
 			selection = MENU_COFFEE;
 		else if (getButtonPress(buttonDown))
