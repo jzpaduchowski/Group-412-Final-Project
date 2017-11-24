@@ -15,6 +15,10 @@ string CUP_FELL_ERROR = "The cup fell!";
 string NO_CUP_ERROR = "No more cups!";
 string CUP_EXISTS_ERROR = "Cup exists!";
 string CUP_CART_FELL = "Cart is off the track!";
+<<<<<<< HEAD
+=======
+
+>>>>>>> 044038d96400138fc9312e3318830a1a9bd73b7e
 const float FLOWRATE_DRINK = 23.33; //mL/s
 const float FLOWRATE_MILK = 8; //mL/s
 const int OPEN_POS = 1;
