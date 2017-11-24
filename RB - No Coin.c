@@ -22,6 +22,7 @@ task main()
 	SensorType[S2] = sensorEV3_Touch;
 
 
+
 	nMotorEncoder[motorA] = 0;
 	nMotorEncoder[motorB] = 0;
 	nMotorEncoder[motorC] = 0;
@@ -40,7 +41,7 @@ task main()
 
 
 
-	initializeCoinSorter();
+	//initializeCoinSorter();
 	calibrateCart();
 
 
@@ -65,8 +66,7 @@ task main()
 
 			total = (numCoffee * COFFEE_PRICE + numTea * TEA_PRICE);
 
-			while(getButtonPress(buttonAny))
-			{}
+			while(getButtonPress(buttonAny));
 
 			displayPayment(total);
 
@@ -74,19 +74,22 @@ task main()
 			//while(getButtonPress(buttonAny));
 
 			///////////////////////////////////Coin Sorting
-			///*
+			/*
 
 
 			while (totalCoin < total)
 			{
 				totalCoin += countCoins(total);
-
+				if (totalCoin < 0)
+				{
+					totalCoin == 0;
+				}
 				displayPayment(total, totalCoin);
 			}
 
 			displayPayment(ORDER_SUCCESS);
 
-			//*/
+			*/
 			//////////////////////////////////////End Coin sorting
 
 			for (int coffeeCount = 0; coffeeCount < numCoffee; coffeeCount++)
@@ -110,11 +113,7 @@ task main()
 
 			endCustomer();
 
-			goTo(20);
+			goTo(0);
 		}
-
-
-
-
 	}
 }

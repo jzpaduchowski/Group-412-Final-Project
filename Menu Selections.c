@@ -1,9 +1,7 @@
-const int MENU_EMPTY = 0;
 const int MENU_COFFEE = 1;
 const int MENU_TEA = 2;
-const int MENU_MILKS = 3;
-const int ORDER_FAILED = -1;
-const int ORDER_SUCCESS = 0;
+const int ORDER_FAILED = -100;
+const int ORDER_SUCCESS = -99;
 const float COFFEE_PRICE = 1.5;
 const float TEA_PRICE = 1.5;
 const int COFFEE_TYPE = 0;
@@ -66,33 +64,38 @@ void displayPayment(float orderCost, float coinsInserted)
 	drawBmpfile(0, 127, "menuEmpty");
 	displayCenteredBigTextLine(6,"Order Total: ");
 	displayCenteredBigTextLine(9, "$%.2f", orderCost);
-	displayCenteredBigTextLine(12, "Owing: $%.2f", (orderCost - coinsInserted);
-
+	if ((orderCost - coinsInserted) < 0)
+	{
+		displayCenteredBigTextLine(12, "Owing: $%.2f", 0);
+	}
+	else
+	{
+		displayCenteredBigTextLine(12, "Owing: $%.2f", (orderCost - coinsInserted));
+	}
 }
 
 void dispProgress(int drink, int drinkNum)
 {
 
 
-		drawBmpfile(0, 127, "menuEmpty");
-		displayCenteredBigTextLine(6,"Now Preparing:");
-		if (drink == COFFEE_TYPE)
-			displayCenteredBigTextLine(9, "Coffee %d", drinkNum);
-		else if (drink == TEA_TYPE)
-			displayCenteredBigTextLine(9, "Tea %d", drinkNum);
+	drawBmpfile(0, 127, "menuEmpty");
+	displayCenteredBigTextLine(6,"Now Preparing:");
+	if (drink == COFFEE_TYPE)
+		displayCenteredBigTextLine(9, "Coffee %d", drinkNum);
+	else if (drink == TEA_TYPE)
+		displayCenteredBigTextLine(9, "Tea %d", drinkNum);
 
 }
 
 void dispIsReady()
 {
-
-		displayCenteredBigTextLine(6,"Please take:");
+	playSoundFile("Confirm");
+	displayCenteredBigTextLine(6,"Please take:");
 }
 
 
 void endCustomer()
 {
-
 	drawBmpfile(0, 127, "menuEmpty");
 	displayCenteredBigTextLine(8,"Thank you!");
 	displayCenteredBigTextLine(11, "Goodbye!");
@@ -111,13 +114,15 @@ bool getDrinkSelections(int & numCoffee, int & numTea)
 	while ((!getButtonPress(buttonEnter) || ((numCoffee + numTea) < 1)) && !isQuit )
 	{
 
-		while (getButtonPress(buttonAny) && !(getButtonPress(buttonUp) && getButtonPress(buttonDown)));
+		while (getButtonPress(buttonAny) && !(getButtonPress(buttonUp) && getButtonPress(buttonDown)))
+		{}
 
 		if (getButtonPress(buttonUp) && getButtonPress(buttonDown))
 		{
 			isQuit = true;
 		}
-		while (!getButtonPress(buttonAny) && !isQuit);
+		while (!getButtonPress(buttonAny) && !isQuit)
+		{}
 
 
 		if (getButtonPress(buttonUp))
@@ -159,7 +164,8 @@ bool getDrinkSelections(int & numCoffee, int & numTea)
 
 		}
 	}
-	while(getButtonPress(buttonAny));
+	while(getButtonPress(buttonAny))
+	{}
 
 	return isQuit;
 }
@@ -172,8 +178,10 @@ void getMilkSelections(int numCoffee, int numTea, int* numMilkCoffee, int* numMi
 		while(!getButtonPress(buttonEnter))
 		{
 			displayMilks(numMilkCoffee[coffeeCount], MENU_COFFEE, (coffeeCount + 1));
-			while (getButtonPress(buttonAny));
-			while (!getButtonPress(buttonAny));
+			while (getButtonPress(buttonAny))
+			{}
+			while (!getButtonPress(buttonAny))
+			{}
 
 			if (getButtonPress(buttonRight) || getButtonPress(buttonUp))
 			{
@@ -194,7 +202,8 @@ void getMilkSelections(int numCoffee, int numTea, int* numMilkCoffee, int* numMi
 			sleep(800);
 		}
 
-		while (getButtonPress(buttonAny));
+		while (getButtonPress(buttonAny))
+		{}
 	}
 
 	for (int teaCount = 0; teaCount < numTea; teaCount++)
@@ -202,8 +211,10 @@ void getMilkSelections(int numCoffee, int numTea, int* numMilkCoffee, int* numMi
 		while(!getButtonPress(buttonEnter))
 		{
 			displayMilks(numMilkTea[teaCount], MENU_TEA, (teaCount + 1));
-			while (getButtonPress(buttonAny));
-			while (!getButtonPress(buttonAny));
+			while (getButtonPress(buttonAny))
+			{}
+			while (!getButtonPress(buttonAny))
+			{}
 
 			if (getButtonPress(buttonRight))
 			{
@@ -219,9 +230,9 @@ void getMilkSelections(int numCoffee, int numTea, int* numMilkCoffee, int* numMi
 		if (numMilkTea[teaCount] == 5)
 		{
 			playSoundFile("Okey-dokey");
-			sleep(800);
 		}
-		while (getButtonPress(buttonAny));
+		while (getButtonPress(buttonAny))
+		{}
 	}
 }
 

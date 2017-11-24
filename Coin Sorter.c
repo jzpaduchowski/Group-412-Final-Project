@@ -4,16 +4,22 @@
 
 void advanceCoin()
 {
-		motor[motorC] = 60;
+	motor[motorC] = 60;
 
-		while (nMotorEncoder[motorC] < 45);
-		motor[motorC] = 0;
+	while (nMotorEncoder[motorC] < 45)
+	{}
+	motor[motorC] = 0;
 
 
-		motor[motorC] = -40;
-		while (nMotorEncoder[motorC] > 0);
-		motor[motorC] = 0;
+	motor[motorC] = -40;
+	while (nMotorEncoder[motorC] > 15)
+	{}
+	motor[motorC] = -15;
+	while (nMotorEncoder[motorC] > 0)
+	{}
+	motor[motorC] = 0;
 
+	wait1Msec(300);
 }
 
 void initializeCoinSorter()
@@ -124,7 +130,7 @@ float countCoins(float payTotal)
 		else if (DIME_MIN < encoderValue && encoderValue < DIME_MAX)
 		{
 			totalCoin += 0.1;
-			encoderReverse = 300;
+			encoderReverse = 350;
 		}
 		else if (encoderValue > NO_COIN_MAX && totalCoin >= payTotal)
 		{
@@ -139,7 +145,12 @@ float countCoins(float payTotal)
 			displayBigTextLine(6, "Coin error");
 		}
 
-		displayPayment(payTotal, totalCoin);
+		if (totalCoin < 0)
+			displayPayment(payTotal, 0);
+		else
+			displayPayment(payTotal, totalCoin);
+
+
 
 		//Drop coin and reset coin measurement system
 		motor[motorD] = -75;
