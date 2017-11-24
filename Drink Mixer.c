@@ -13,7 +13,8 @@ const int CUP_POS = 440; //Position of cup dispenser
 const int CUP_DELIVERY_POS = 750; //Position to deliver the cup
 string CUP_FELL_ERROR = "The cup fell!";
 string NO_CUP_ERROR = "No more cups!";
-string CUP_EXISTS_ERROR = "Cup exists!"
+string CUP_EXISTS_ERROR = "Cup exists!";
+string CUP_CART_FELL = "Cart is off the track!";
 const float FLOWRATE_DRINK = 23.33; //mL/s
 const float FLOWRATE_MILK = 8; //mL/s
 const int OPEN_POS = 1;
@@ -111,7 +112,6 @@ void detectCupError (int errorProtocol, int drinkSelect, int numMilks)
 		}
 	}
 }
-
 void goTo(int pos)
 {
 	//Sets the direction to go backwards or forwards
@@ -128,8 +128,31 @@ void goTo(int pos)
 		hasCup = false;
 	}
 
+	clearTimer(T2);
+	int currentTime = time1(T2);
 	motor[motorA] = CART_SPEED * direction;
-	while (abs(nMotorEncoder[motorA] - pos) > CART_SPEED * 2 && !(SensorValue[S1] == 0 && hasCup));
+
+	while (abs(nMotorEncoder[motorA] - pos) > CART_SPEED * 2 && !(SensorValue[S1] == 0 && hasCup))
+	{
+
+		if(((time1(T2) - currentTime) > 500))
+		{
+
+			int currentEnc = nMotorEncoder[motorA];
+
+			if(abs(currentEnc - tempEnc) < 5)
+			{
+				motor[motorA] = 0;
+				errorMessage(CUP_CART_FELL);
+				while(1 < 2)
+				{} //Fatal error needs human intervention so we go into an infinite loop and wait
+			}
+
+			int tempTime = currentTime;
+			int tempEnc = nMotorEncoder[motorA];
+			clearTimer(T2);
+		}
+	}
 
 	//Impementing slow stopping
 	while ((abs(nMotorEncoder[motorA] - pos) / 2) < CART_SPEED * 2 + 5 && abs(nMotorEncoder[motorA] - pos) > 1 && !(SensorValue[S1] == 0 && hasCup))
@@ -203,6 +226,9 @@ void getCup()
 {
 	goTo(CUP_POS);
 
+	displayBigTextLine(13, "Here2");
+
+	//If there is a cup
 	if (SensorValue[S1] != 0)
 	{
 
@@ -211,9 +237,9 @@ void getCup()
 		while (SensorValue[S1] != 0);
 		wait1Msec(1000);
 		goTo(CUP_POS);
-
 	}
 
+	displayBigTextLine(13, "Here3");
 	operateValve(OPEN_POS, CUP_POS);
 	wait1Msec(250);
 	operateValve(CLOSE_POS, CUP_POS);
