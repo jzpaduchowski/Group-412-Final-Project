@@ -70,20 +70,25 @@ void displayPayment(float orderCost, float coinsInserted)
 
 }
 
-void dispProgress(bool isReady, int drink, int drinkNum)
+void dispProgress(int drink, int drinkNum)
 {
-	drawBmpfile(0, 127, "menuEmpty");
 
-	if (isReady == false)
+
+		drawBmpfile(0, 127, "menuEmpty");
 		displayCenteredBigTextLine(6,"Now Preparing:");
-	else if (isReady == true)
-		displayCenteredBigTextLine(6,"Please take:");
+		if (drink == COFFEE_TYPE)
+			displayCenteredBigTextLine(9, "Coffee %d", drinkNum);
+		else if (drink == TEA_TYPE)
+			displayCenteredBigTextLine(9, "Tea %d", drinkNum);
 
-	if (drink == COFFEE_TYPE)
-		displayCenteredBigTextLine(9, "Coffee %d", drinkNum);
-	else if (drink == TEA_TYPE)
-		displayCenteredBigTextLine(9, "Tea %d", drinkNum);
 }
+
+void dispIsReady()
+{
+
+		displayCenteredBigTextLine(6,"Please take:");
+}
+
 
 void endCustomer()
 {

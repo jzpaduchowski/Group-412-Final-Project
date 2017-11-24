@@ -39,6 +39,9 @@ task main()
 	int isNotQuit = true;
 
 
+	calibrateCart();
+
+
 	while (isNotQuit)
 	{
 		for (int index = 0; index < 5; index++)
@@ -84,16 +87,14 @@ task main()
 
 			for (int coffeeCount = 0; coffeeCount < numCoffee; coffeeCount++)
 			{
-				dispProgress(false, COFFEE_TYPE, coffeeCount + 1);
+				dispProgress(COFFEE_TYPE, coffeeCount + 1);
 				cartControl(COFFEE_TYPE, numMilkCoffee[coffeeCount]);
-				dispProgress(true, COFFEE_TYPE, coffeeCount + 1);
 			}
 
 			for (int teaCount = 0; teaCount < numTea; teaCount++)
 			{
-				dispProgress(false, TEA_TYPE, teaCount + 1);
+				dispProgress(TEA_TYPE, teaCount + 1);
 				cartControl(TEA_TYPE, numMilkTea[teaCount]);
-				dispProgress(true, TEA_TYPE, teaCount + 1);
 			}
 
 			endCustomer();

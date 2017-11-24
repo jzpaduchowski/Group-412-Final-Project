@@ -15,10 +15,6 @@ string CUP_FELL_ERROR = "The cup fell!";
 string NO_CUP_ERROR = "No more cups!";
 string CUP_EXISTS_ERROR = "Cup exists!";
 string CUP_CART_FELL = "Cart is off the track!";
-<<<<<<< HEAD
-=======
-
->>>>>>> 044038d96400138fc9312e3318830a1a9bd73b7e
 const float FLOWRATE_DRINK = 23.33; //mL/s
 const float FLOWRATE_MILK = 8; //mL/s
 const int OPEN_POS = 1;
@@ -50,6 +46,10 @@ void errorMessage(string errorCode)
 
 	displayCenteredTextLine(13, "ERROR!");
 	displayCenteredTextLine(14, "%s", errorCode);
+
+	while(errorCode == CUP_CART_FELL)
+	{} //Fatal error needs human intervention so we go into an infinite loop and wait for operators to manually quit and fix the robot
+
 	displayCenteredTextLine(15, "Press to resolve");
 
 	wait4Button();
@@ -121,6 +121,10 @@ void goTo(int pos)
 	//Sets the direction to go backwards or forwards
 	int direction = 1;
 
+	int previousEncoder = nMotorEncoder[motorA];
+
+
+
 	bool hasCup = true;
 
 	if (pos < nMotorEncoder[motorA])
@@ -133,27 +137,20 @@ void goTo(int pos)
 	}
 
 	clearTimer(T2);
-	int currentTime = time1(T2);
 	motor[motorA] = CART_SPEED * direction;
 
 	while (abs(nMotorEncoder[motorA] - pos) > CART_SPEED * 2 && !(SensorValue[S1] == 0 && hasCup))
 	{
 
-		if(((time1(T2) - currentTime) > 500))
+		if((time1(T2)) > 500)
 		{
-
-			int currentEnc = nMotorEncoder[motorA];
-
-			if(abs(currentEnc - tempEnc) < 5)
+			if(abs(nMotorEncoder[motorA] - previousEncoder) < 3)
 			{
 				motor[motorA] = 0;
 				errorMessage(CUP_CART_FELL);
-				while(1 < 2)
-				{} //Fatal error needs human intervention so we go into an infinite loop and wait
-			}
 
-			int tempTime = currentTime;
-			int tempEnc = nMotorEncoder[motorA];
+			}
+			previousEncoder = nMotorEncoder[motorA];
 			clearTimer(T2);
 		}
 	}
@@ -165,10 +162,28 @@ void goTo(int pos)
 	}
 	motor[motorA] = 0;
 
-	if (false && hasCup)
+
+
+	if (hasCup)
+	{
 		detectCupError(GOTO_ERROR, pos);
+	}
+
+	wait1Msec(300);
 
 }
+
+void calibrateCart()
+{
+
+	motor[motorA] = -10;
+	while(SensorValue[S2] == 0)
+	{}
+	motor[motorA] = 0;
+	nMotorEncoder[motorA] = 0;
+
+}
+
 
 
 void operateValve(int toOpen, int valveType)
@@ -201,7 +216,7 @@ void operateValve(int toOpen, int valveType)
 		{
 
 			motor[motorB] = -33;
-			while(nMotorEncoder[motorB] > -8);
+			while(nMotorEncoder[motorB] > -10);
 			motor[motorB] = 15;
 			while(nMotorEncoder[motorB] < 0);
 			motor[motorB] = 0;
@@ -230,7 +245,6 @@ void getCup()
 {
 	goTo(CUP_POS);
 
-	displayBigTextLine(13, "Here2");
 
 	//If there is a cup
 	if (SensorValue[S1] != 0)
@@ -243,7 +257,6 @@ void getCup()
 		goTo(CUP_POS);
 	}
 
-	displayBigTextLine(13, "Here3");
 	operateValve(OPEN_POS, CUP_POS);
 	wait1Msec(250);
 	operateValve(CLOSE_POS, CUP_POS);
@@ -251,7 +264,6 @@ void getCup()
 	wait1Msec(250);
 	detectCupError(GETCUP_ERROR);
 }
-
 
 
 //This is the main drink preparation function. Given the drink type and number of milks, the robot will go and prepare that drink.
@@ -296,7 +308,8 @@ void cartControl(int drinkSelect, int numMilk)
 	{
 		//Goes to deliver the drink
 		goTo(CUP_DELIVERY_POS);
-		//It will wait
+		dispIsReady();
+		//It will wait 1.5 seconds after the cup has been last seen
 		clearTimer(T1);
 		while ((time1[T1] < 1500))
 		{
