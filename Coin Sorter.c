@@ -1,7 +1,6 @@
 //############################Start of Coin Sorting Programs##################################
 
-
-
+//Function to put a new coin into the coin reader
 void advanceCoin()
 {
 	motor[motorC] = 60;
@@ -22,13 +21,13 @@ void advanceCoin()
 	wait1Msec(300);
 }
 
+//Initializes the coin sorter with a toonie as a set diameter
 void initializeCoinSorter()
 {
 	const int initializationReverseTo = -1500;
 	const int initializationResetTo = -400;
 
 	SensorType[S4] = sensorEV3_Touch;
-
 
 	displayBigTextLine(3, "Insert Toonie");
 
@@ -103,7 +102,7 @@ float countCoins(float payTotal)
 		motor[motorD] = 0;
 		encoderValue = nMotorEncoder[motorD];
 
-		//Add appropriate coin value to the total count
+		//Detects which cup it is and add appropriate coin value to the total count
 		int encoderReverse = 0;
 		if (TOONIE_MIN < encoderValue && encoderValue < TOONIE_MAX)
 		{
@@ -113,12 +112,12 @@ float countCoins(float payTotal)
 		else if (LOONIE_MIN < encoderValue && encoderValue < LOONIE_MAX)
 		{
 			totalCoin += 1;
-			encoderReverse = 925;
+			encoderReverse = 975;
 		}
 		else if (QUARTER_MIN < encoderValue && encoderValue < QUARTER_MAX)
 		{
 			totalCoin += 0.25;
-			encoderReverse = 750;
+			encoderReverse = 775;
 		}
 		else if (NICKEL_MIN < encoderValue && encoderValue < NICKEL_MAX)
 		{
@@ -129,8 +128,9 @@ float countCoins(float payTotal)
 		else if (DIME_MIN < encoderValue && encoderValue < DIME_MAX)
 		{
 			totalCoin += 0.1;
-			encoderReverse = 350;
+			encoderReverse = 375;
 		}
+		//This is for checking if there are no more coins
 		else if (encoderValue > NO_COIN_MAX && totalCoin >= payTotal)
 		{
 			moreCoins = false;

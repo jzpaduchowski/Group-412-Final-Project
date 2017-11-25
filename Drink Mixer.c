@@ -32,7 +32,7 @@ void getCup();
 void cartControl(int drinkSelect, int numMilk);
 
 
-
+//Calibrates the cart at the start of the track
 void calibrateCart()
 {
 
@@ -45,8 +45,7 @@ void calibrateCart()
 
 }
 
-
-
+//Helper function to get a button press
 void wait4Button()
 {
 	while (!getButtonPress(buttonAny))
@@ -55,6 +54,8 @@ void wait4Button()
 	{}
 }
 
+
+//Error message function to display error messages
 void errorMessage(string errorCode)
 {
 
@@ -82,8 +83,7 @@ float pourTime(int valveType, int numMilks)
 
 	if (valveType == DRINK_TYPE)
 	{
-		//Returns the time it takes to fill a cup with drink according to equation:
-		//time = flowrate (in ml/s) * 1000ms * 350ml - numMilks * 1000ms * 10ml
+		//Returns the time it takes to fill a cup with drink. Calculates the amount of liquid displaced by the milks
 		timeToPour = ((350.0 - (numMilks * 10))* 1000.0) / FLOWRATE_DRINK;
 	}
 	else if (numMilks > 0)
@@ -94,6 +94,7 @@ float pourTime(int valveType, int numMilks)
 	return timeToPour;
 }
 
+//#######################~Cup Error Detection Functions~#######################################3
 void detectCupError (int errorProtocol)
 {
 	if (SensorValue[S1] == 0)
@@ -105,7 +106,6 @@ void detectCupError (int errorProtocol)
 		}
 	}
 }
-
 
 void detectCupError (int errorProtocol, int pos)
 {
@@ -135,8 +135,9 @@ bool detectCupError (int errorProtocol, int drinkSelect, int numMilks)
 	}
 	return isError;
 }
+//###############################~End of cup error detection functions~######################################
 
-
+//A go to error detection function to find go to a specified position
 void goTo(int pos)
 {
 	//Sets the direction to go backwards or forwards
@@ -144,17 +145,25 @@ void goTo(int pos)
 	int previousEncoder = nMotorEncoder[motorA];
 	bool hasCup = true;
 
+	//Sets the direction to go forwards or backwards
 	if (pos < nMotorEncoder[motorA])
 		direction = -1;
 
+	//Checks if it has to detect for cups throughout the program
 	if (SensorValue[S1] == 0)
 		hasCup = false;
 
+	//A timer is used here to detect the cup detection every fraction of a second
 	clearTimer(T2);
+
+	//Sets the cart speed with direction
 	motor[motorA] = CART_SPEED * direction;
 
+	//Lets the cart travel until it reaches a distance away from the desired position based off the speed
+	//It will also check if the cup "falls off" the cart when in motion
 	while (abs(nMotorEncoder[motorA] - pos) > CART_SPEED * 2 && !(SensorValue[S1] == 0 && hasCup))
 	{
+		//every 500ms, it will check if the cart is stuck somewhere on the track
 		if((time1(T2)) > 500)
 		{
 			if(abs(nMotorEncoder[motorA] - previousEncoder) < 3)
@@ -167,13 +176,13 @@ void goTo(int pos)
 		}
 	}
 
-	//Impementing slow stopping
-	//(abs(nMotorEncoder[motorA] - pos) / 2) < CART_SPEED * 2 + 5 &&
+	//After it is within the position range, it will slowly stop the cart as a function of how far it is from the position.
 	while ((direction * (pos - nMotorEncoder[motorA] )) > 1 && !(SensorValue[S1] == 0 && hasCup))
 	{
 		motor[motorA] = (1.0 * pos - nMotorEncoder[motorA]) / 2;
 	}
 
+	//Stops the cart
 	motor[motorA] = 0;
 
 	if (hasCup)

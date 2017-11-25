@@ -124,15 +124,15 @@ bool getDrinkSelections(int & numCoffee, int & numTea)
 		while (!getButtonPress(buttonAny) && !isQuit)
 		{}
 
-		//
+		//Checks to see if the button pressed were for changing the selections
 		if (getButtonPress(buttonUp))
 			selection = MENU_COFFEE;
 		else if (getButtonPress(buttonDown))
 			selection = MENU_TEA;
 
+		//Increases or decreases the quantity of coffee
 		if (selection == MENU_COFFEE)
 		{
-
 			if (getButtonPress(buttonRight))
 			{
 				if ((numCoffee + numTea) < 5)
@@ -144,11 +144,12 @@ bool getDrinkSelections(int & numCoffee, int & numTea)
 					--numCoffee;
 			}
 
+			//Updates the display
 			displayCoffeeTea(numCoffee, numTea, MENU_COFFEE);
 		}
 		else if (selection == MENU_TEA)
 		{
-
+			//Increments or decrements the quantity of tea
 			if (getButtonPress(buttonRight))
 			{
 				if ((numCoffee + numTea) < 5)
@@ -160,6 +161,7 @@ bool getDrinkSelections(int & numCoffee, int & numTea)
 					--numTea;
 			}
 
+			//Updates display
 			displayCoffeeTea(numCoffee, numTea, MENU_TEA);
 
 		}
@@ -167,9 +169,11 @@ bool getDrinkSelections(int & numCoffee, int & numTea)
 	while(getButtonPress(buttonAny))
 	{}
 
+	//Returns if the operator wanted to quit or not
 	return isQuit;
 }
 
+//Gets the amount of milk from the customer for each drink
 void getMilkSelections(int numCoffee, int numTea, int* numMilkCoffee, int* numMilkTea)
 {
 
@@ -177,18 +181,22 @@ void getMilkSelections(int numCoffee, int numTea, int* numMilkCoffee, int* numMi
 	{
 		while(!getButtonPress(buttonEnter))
 		{
+			//Shows amount of milk
 			displayMilks(numMilkCoffee[coffeeCount], MENU_COFFEE, (coffeeCount + 1));
+
 			while (getButtonPress(buttonAny))
 			{}
 			while (!getButtonPress(buttonAny))
 			{}
 
+			//Increments the number of milks
 			if (getButtonPress(buttonRight) || getButtonPress(buttonUp))
 			{
 				if (numMilkCoffee[coffeeCount] < 5)
 					++numMilkCoffee[coffeeCount];
 
 			}
+			//Decrements number of milks
 			else if (getButtonPress(buttonLeft) || getButtonPress(buttonDown))
 			{
 				if (numMilkCoffee[coffeeCount] > 0)
@@ -196,6 +204,7 @@ void getMilkSelections(int numCoffee, int numTea, int* numMilkCoffee, int* numMi
 			}
 		}
 
+		//Easter egg
 		if (numMilkCoffee[coffeeCount] == 5)
 		{
 			playSoundFile("Okey-dokey");
@@ -206,22 +215,26 @@ void getMilkSelections(int numCoffee, int numTea, int* numMilkCoffee, int* numMi
 		{}
 	}
 
+	//Gets number of tea for each tea
 	for (int teaCount = 0; teaCount < numTea; teaCount++)
 	{
 		while(!getButtonPress(buttonEnter))
 		{
+			//Displays the number of milks requested
 			displayMilks(numMilkTea[teaCount], MENU_TEA, (teaCount + 1));
+
 			while (getButtonPress(buttonAny))
 			{}
 			while (!getButtonPress(buttonAny))
 			{}
 
-			if (getButtonPress(buttonRight))
+			//Increments and decrements the number of milks
+			if (getButtonPress(buttonRight) || getButtonPress(buttonUp))
 			{
 				if (numMilkTea[teaCount] < 5)
 					++numMilkTea[teaCount];
 			}
-			else if (getButtonPress(buttonLeft))
+			else if (getButtonPress(buttonLeft) || getButtonPress(buttonDown))
 			{
 				if (numMilkTea[teaCount] > 0)
 					--numMilkTea[teaCount];

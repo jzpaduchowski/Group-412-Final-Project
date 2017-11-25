@@ -16,7 +16,7 @@ D - Coin Measurement
 task main()
 {
 	//Initialization for all used variables
-	setSoundVolume(75);
+	setSoundVolume(95);
 
 	setLEDColor(ledOff);
 
