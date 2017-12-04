@@ -12,7 +12,7 @@ D - Coin Measurement
 4 - Coin touch sensor
 */
 
-//############################Start of Main##################################
+
 task main()
 {
 	//Initialization for all used variables
@@ -26,6 +26,8 @@ task main()
 	wait1Msec(50);
 
 	SensorType[S2] = sensorEV3_Touch;
+
+	SensorType[S4] = sensorEV3_Touch;
 
 	nMotorEncoder[motorA] = 0;
 	nMotorEncoder[motorB] = 0;

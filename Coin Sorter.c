@@ -1,15 +1,29 @@
 //############################Start of Coin Sorting Programs##################################
 
+//Constants for the range of encoder values allowed for each kind of coin
+const int TOONIE_MIN = 350;
+const int TOONIE_MAX = 450;
+const int LOONIE_MIN = 460;
+const int LOONIE_MAX = 590;
+const int QUARTER_MIN = 610;
+const int QUARTER_MAX = 750;
+const int NICKEL_MIN = 800;
+const int NICKEL_MAX = 900;
+const int DIME_MIN = 950;
+const int DIME_MAX = 1150;
+const int NO_COIN_MAX = 1250;
+
+
 //Function to put a new coin into the coin reader
 void advanceCoin()
 {
+	//Turns the coin wheel at 60% power for 45 degrees to flick the coin into the reader
 	motor[motorC] = 60;
-
 	while (nMotorEncoder[motorC] < 45)
 	{}
 	motor[motorC] = 0;
 
-
+	//Resets the motor at a slower speed than normal
 	motor[motorC] = -40;
 	while (nMotorEncoder[motorC] > 15)
 	{}
@@ -27,71 +41,53 @@ void initializeCoinSorter()
 	const int initializationReverseTo = -1500;
 	const int initializationResetTo = -400;
 
-	SensorType[S4] = sensorEV3_Touch;
-
 	displayBigTextLine(3, "Insert Toonie");
 
-
+	//Gets button press to read first toonie
 	while (!getButtonPress(buttonAny))
 	{}
 	while (getButtonPress(buttonAny))
 	{}
 
-	advanceCoin();
-
 	eraseDisplay();
 
+	//Gets the first toonie
+	advanceCoin();
+
+	//Reads the value of the toonie
 	motor[motorD] = 75;
 	while(SensorValue[S4] == 0)
 	{}
 
-	//For resetting initializing toonie
+	motor[motorD] = 0;
+
+	//Resets the motor to the position that will allow the toonie into the reader but not dimes
 	nMotorEncoder[motorD] = 0;
 	motor[motorD] = -75;
+	//Drops the toonie first
 	while (nMotorEncoder[motorD] > initializationReverseTo)
 	{}
-
-	//Setting to correct position
 	motor[motorD] = 75;
 	while (nMotorEncoder[motorD] < initializationResetTo)
 	{}
 
-
+	//Resets the motor for the rest of the coin reading
 	motor[motorD] = 0;
 	nMotorEncoder[motorD] = 0;
-	eraseDisplay();
 }
 
-
-
-
+//Counts all the coins in the reader until there are no more
 float countCoins(float payTotal)
 {
-	//Constants for the range of encoder values allowed for each kind of coin
-	const int TOONIE_MIN = 350;
-	const int TOONIE_MAX = 450;
-	const int LOONIE_MIN = 460;
-	const int LOONIE_MAX = 590;
-	const int QUARTER_MIN = 610;
-	const int QUARTER_MAX = 750;
-	const int NICKEL_MIN = 800;
-	const int NICKEL_MAX = 900;
-	const int DIME_MIN = 950;
-	const int DIME_MAX = 1150;
-	const int NO_COIN_MAX = 1250;
-
 	float totalCoin = 0;
 	int encoderValue = 0;
 	bool moreCoins = true;
-
-	int motorPosition = 0;
-
 
 	nMotorEncoder[motorC] = 0;
 
 	while (moreCoins)
 	{
-
+		//Gets the next coin
 		advanceCoin();
 
 		//Squeeze the coin and get a motor encoder reading
@@ -99,6 +95,7 @@ float countCoins(float payTotal)
 		while(SensorValue[S4] == 0)
 		{}
 
+		//Stops the motor
 		motor[motorD] = 0;
 		encoderValue = nMotorEncoder[motorD];
 
@@ -130,28 +127,19 @@ float countCoins(float payTotal)
 			totalCoin += 0.1;
 			encoderReverse = 375;
 		}
-		//This is for checking if there are no more coins
+		//Exits if there are no more coins
 		else if (encoderValue > NO_COIN_MAX && totalCoin >= payTotal)
 		{
 			moreCoins = false;
 		}
-		else if (encoderValue > NO_COIN_MAX)
-		{
-			//displayTextLine(6, "No coins yet");
-		}
-		else
-		{
-			displayBigTextLine(6, "Coin error");
-		}
 
+		//Updates the payment systems
 		if (totalCoin < 0)
 			displayPayment(payTotal, 0);
 		else
 			displayPayment(payTotal, totalCoin);
 
-
-
-		//Drop coin and reset coin measurement system
+		//Drops coin and reset coin measurement system
 		motor[motorD] = -75;
 		while(nMotorEncoder[motorD] > -encoderReverse)
 		{}
@@ -159,9 +147,6 @@ float countCoins(float payTotal)
 		while (nMotorEncoder[motorD] < 0)
 		{}
 		motor[motorD] = 0;
-
-		motorPosition = nMotorEncoder[motorC];
-
 	}
 	return totalCoin;
 }

@@ -1,4 +1,4 @@
-const int MENU_COFFEE = 1;
+const int MENU_COFFEE = 1; //These were used before we knew about enumerators
 const int MENU_TEA = 2;
 const int ORDER_FAILED = -100;
 const int ORDER_SUCCESS = -99;
@@ -6,7 +6,6 @@ const float COFFEE_PRICE = 1.5;
 const float TEA_PRICE = 1.5;
 const int COFFEE_TYPE = 0;
 const int TEA_TYPE = 220;
-
 
 //############################Start of Order Processing Programs##################################
 //Displays user's selection on how many coffees or teas
@@ -41,13 +40,16 @@ void displayPayment(float orderCost)
 {
 	drawBmpfile(0, 127, "menuEmpty");
 
+	//Checks if the order had failed
 	if (orderCost == ORDER_FAILED)
 		displayBigTextLine(7, "You did not put in enough coins!");
+	//Shows the order success
 	else if (orderCost == ORDER_SUCCESS)
 	{
 		displayCenteredBigTextLine(6, "Order Success!");
 		displayCenteredBigTextLine(9, "Making order...");
 	}
+	//Shows the order cost before getting coins
 	else
 	{
 		displayCenteredBigTextLine(6,"Order Total: ");
@@ -59,9 +61,12 @@ void displayPayment(float orderCost)
 //Displays the payment and value of coins inserted
 void displayPayment(float orderCost, float coinsInserted)
 {
+	//Shows order cost
 	drawBmpfile(0, 127, "menuEmpty");
 	displayCenteredBigTextLine(6,"Order Total: ");
 	displayCenteredBigTextLine(9, "$%.2f", orderCost);
+
+	//Shows the amount of money remaining
 	if ((orderCost - coinsInserted) < 0)
 	{
 		displayCenteredBigTextLine(12, "Owing: $%.2f", 0);
@@ -72,7 +77,7 @@ void displayPayment(float orderCost, float coinsInserted)
 	}
 }
 
-//Shows which product is being made at the current time
+//Shows which drink is being made at the current time
 void dispProgress(int drink, int drinkNum)
 {
 	drawBmpfile(0, 127, "menuEmpty");
@@ -83,19 +88,19 @@ void dispProgress(int drink, int drinkNum)
 		displayCenteredBigTextLine(9, "Tea %d", drinkNum);
 }
 
+//Alerts the user and shows that their drink is ready.
 void dispIsReady()
 {
 	playSoundFile("Confirm");
 	displayCenteredBigTextLine(6,"Please take:");
 }
 
-//Showing end protocols
+//Showing end protocols to end the user
 void endCustomer()
 {
 	drawBmpfile(0, 127, "menuEmpty");
 	displayCenteredBigTextLine(8,"Thank you!");
 	displayCenteredBigTextLine(11, "Goodbye!");
-
 }
 
 //Gets the user's drink selections for number of cofee and tea
@@ -248,5 +253,4 @@ void getMilkSelections(int numCoffee, int numTea, int* numMilkCoffee, int* numMi
 		{}
 	}
 }
-
 //############################End of Order Processing Programs##################################
